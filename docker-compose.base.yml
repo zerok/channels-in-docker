@@ -1,0 +1,22 @@
+version: '2'
+services:
+  interfaceserver:
+    build: .
+    command: /app/entrypoint-interface.sh
+    user: app
+    working_dir: /app
+    ports:
+      - 8000:8000
+    environment:
+      - DJANGO_SECRET_KEY
+  workerserver:
+    build: .
+    user: app
+    working_dir: /app
+    command: /app/entrypoint-worker.sh
+    environment:
+      - DJANGO_SECRET_KEY
+  database:
+    image: postgres:9.5
+  redis:
+    image: redis:3.0-alpine

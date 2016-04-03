@@ -1,0 +1,24 @@
+version: '2'
+services:
+  interfaceserver:
+    extends:
+      file: docker-compose.base.yml
+      service: interfaceserver
+    depends_on:
+      - database
+      - redis
+  workerserver:
+    extends:
+      file: docker-compose.base.yml
+      service: workerserver
+    depends_on:
+      - database
+      - redis
+  database:
+    extends:
+      file: docker-compose.base.yml
+      service: database
+  redis:
+    extends:
+      file: docker-compose.base.yml
+      service: redis
