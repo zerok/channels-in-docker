@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Django with Channels in Docker</title>
+    </head>
+    <body>
+        <section>
+            <p>Hi 🙂,</p>
+            <p>This is a little demo of how you can get Django Channels to work with Docker. For details
+                please take a took at the README.md file that comes with this project.</p>
+            <p>This page should give you a small demo of Websockets in Channels. For a better experience,
+                open this page within two browser windows side-by-side 😉</p>
+            <p>Type something in the form below and you should see it appearing in every open window.</p>
+        </section>
+        <ul style="float: right; width: 49%; margin: 0; padding: 0">
+            <li>Nothing here yet...</li>
+        </ul>
+        <form method="POST" style="float: left; width: 50%">
+            <input type="text" placeholder="Enter some text here and hit ENTER..." style="min-width: 500px">
+        </form>
+        <script>
+            (function() {
+                // Let's open a little websocket connection to the backend server
+                var socket = null;
+                function createSocket() {
+                    socket = new WebSocket('ws://' + window.location.host + '/socket');
+                    if (socket) {
+                        socket.onmessage = function(e) {
+                            var newLine = document.createElement('li');
+                            var previousFirst = document.querySelector('li');
+                            newLine.innerText = e.data;
+                            document.querySelector('ul').insertBefore(newLine, previousFirst);
+                        };
+                        // When the backend reloads, the connection will be lost.
+                        // This will reopen it after a bit of a cooldown period.
+                        socket.onclose = function(e) {
+                            if (e.code === 1006) {
+                                window.setTimeout(createSocket, 2000);
+                            }
+                        };
+                    }
+                }
+                createSocket();
+
+                // Now let's create our end of the chat window:
+                var form = document.querySelector('form');
+                var input = document.querySelector('input');
+                form.addEventListener('submit', function(evt) {
+                    evt.preventDefault();
+                    socket.send(input.value);
+                    input.value = "";
+                }, false);
+            })();
+        </script>
+    </body>
+</html>

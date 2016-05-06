@@ -25,7 +25,8 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'false').lower() == 'true'
 
-ALLOWED_HOSTS = []
+# Some example hosts that should work in various docker-machine and Docker for Mac setups
+ALLOWED_HOSTS = ['192.168.99.100', 'localhost']
 
 
 # Application definition
@@ -57,7 +58,9 @@ ROOT_URLCONF = 'example_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(os.path.dirname(__file__), 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
