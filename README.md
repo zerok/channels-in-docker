@@ -15,4 +15,5 @@ probably have when operating something like this in development and production.
 ```
 $ export DJANGO_SECRET_KEY=12345
 $ docker-compose -f docker-compose.development.yml up
+$ open http://localhost:8000
 ```
