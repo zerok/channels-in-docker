@@ -10,6 +10,7 @@ def http_request(message):
 
 
 def ws_connect(msg):
+    msg.reply_channel.send({'accept': True})
     Group('custom_broadcast').add(msg.reply_channel)
 
 
