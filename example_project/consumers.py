@@ -1,24 +1,27 @@
-from django.http import HttpResponse
-from channels.handler import AsgiHandler
-from channels import Group
+from channels.consumer import SyncConsumer, AsyncConsumer
 
 
-def http_request(message):
-    response = HttpResponse("Hello world from a consumer!")
-    for chunk in AsgiHandler.encode_response(response):
-        message.reply_channel.send(chunk)
+class ApplicationConsumer(AsyncConsumer):
+    async def websocket_connect(self, event):
+        print("Connect received")
+        await self.channel_layer.group_add('custom_broadcast', self.channel_name)
+        await self.send({
+            'type': 'websocket.accept',
+        })
 
+    async def websocket_disconnect(self, event):
+        print("Disconnect received")
+        await self.channel_layer.group_discard('custom_broadcast', self.channel_name)
 
-def ws_connect(msg):
-    msg.reply_channel.send({'accept': True})
-    Group('custom_broadcast').add(msg.reply_channel)
+    async def websocket_receive(self, event):
+        print("Data received")
+        await self.channel_layer.group_send('custom_broadcast', {
+            'type': 'chat.message',
+            'text': event['text'],
+        })
 
-
-def ws_disconnect(msg):
-    Group('custom_broadcast').discard(msg.reply_channel)
-
-
-def ws_receive(msg):
-    Group('custom_broadcast').send({
-        'text': msg.content['text']
-    })
+    async def chat_message(self, event):
+        await self.send({
+            'type': 'websocket.send',
+            'text': event['text'],
+        })

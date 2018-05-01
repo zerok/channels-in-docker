@@ -1,4 +1,4 @@
-FROM python:3.5
+FROM python:3.6.5-stretch
 
 RUN useradd --system app && \
     mkdir /app && \
@@ -7,7 +7,7 @@ RUN useradd --system app && \
 ADD requirements.txt entrypoint-*.sh manage.py /app/
 ADD example_project /app/example_project
 
-RUN pip install -r /app/requirements.txt
+RUN pip3 install -r /app/requirements.txt
 
 VOLUME ["/app"]
 USER app
